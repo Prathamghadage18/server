@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Industrial Sensor Management — Tree Layout{% endblock %}</title>
+
+  <!-- React (UMD) + Babel for inline JSX -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    /* ---- copy of CSS from your copy1.html (keeps style identical) ---- */
+    html,body { height:100%; }
+    body { margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f3f4f6; }
+    .app { display:flex; min-height:100vh; }
+
+    .sidebar {
+      width: 300px;
+      max-width: 320px;
+      background: #ffffff;
+      border-right: 1px solid rgba(0,0,0,0.06);
+      padding: 18px;
+      box-sizing: border-box;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .brand {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-bottom:6px;
+    }
+    .brand h1 { font-size:18px; margin:0; }
+    .search-box { position:relative; }
+    .search-box input {
+      width:100%;
+      padding:10px 12px 10px 36px;
+      border-radius:8px;
+      border:1px solid #e5e7eb;
+      outline:none;
+    }
+    .search-box i { position:absolute; left:10px; top:8px; color:#9ca3af; }
+
+    .overview {
+      background: #fffbeb;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid rgba(245,158,11,0.12);
+    }
+    .overview .row { display:flex; gap:8px; align-items:center; justify-content:space-between; }
+    .overview .stat { background:#fff; padding:8px; border-radius:8px; width:48%; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+
+    .nav-list { margin-top:6px; display:flex; flex-direction:column; gap:8px; }
+    .nav-item { display:flex; gap:10px; align-items:center; padding:8px; border-radius:8px; color:#374151; cursor:pointer; }
+    .nav-item:hover { background: #f8fafc; }
+
+    .main { flex:1; overflow:auto; position:relative; padding: 20px; }
+
+    .canvas {
+      background: linear-gradient(135deg,#f5f1eb 0%, #ede4d3 100%);
+      min-height:700px;
+      padding:18px;
+      border-radius:12px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.04);
+      position:relative;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+
+    .tree-container {
+      position: relative;
+      transition: all 0.35s ease;
+    }
+
+    .tree-node {
+      position: absolute;
+      transition: all 0.35s cubic-bezier(.2,.9,.1,1);
+      transform-origin: center;
+      width: 200px;
+      z-index: 10;
+    }
+
+    .tree-node.selected { transform: scale(1.02); z-index: 40; box-shadow: 0 10px 30px rgba(139,115,85,0.15); }
+
+    .node-content {
+      background:white;
+      border-radius:12px;
+      padding:14px;
+      border:2px solid transparent;
+      min-height:120px;
+      box-shadow:0 6px 20px rgba(139,115,85,0.08);
+      position:relative;
+      overflow:hidden;
+      transition: all 0.35s cubic-bezier(.2,.9,.1,1);
+      cursor:default;
+    }
+    .node-content:hover { box-shadow:0 10px 30px rgba(139,115,85,0.12); border-color:#e9d8a6; }
+
+    .node-header { display:flex; gap:12px; align-items:center; margin-bottom:8px; }
+    .node-icon { width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:white; font-size:15px; }
+    .icon-manufacturer { background: linear-gradient(135deg,#8b5cf6,#7c3aed); }
+    .icon-segment { background: linear-gradient(135deg,#ef4444,#dc2626); }
+    .icon-site { background: linear-gradient(135deg,#f59e0b,#d97706); }
+    .icon-plant { background: linear-gradient(135deg,#06b6d4,#0891b2); }
+    .icon-function { background: linear-gradient(135deg,#10b981,#059669); }
+    .icon-system { background: linear-gradient(135deg,#6366f1,#4f46e5); }
+    .icon-machine { background: linear-gradient(135deg,#ec4899,#db2777); }
+    .icon-stage { background: linear-gradient(135deg,#84cc16,#65a30d); }
+    .icon-sensor { background: linear-gradient(135deg,#f97316,#ea580c); }
+
+    .node-title { font-weight:700; color:#111827; font-size:14px; transition: all 0.35s ease; }
+    .node-meta { font-size:12px; color:#6b7280; margin-top:6px; transition: all 0.35s ease; }
+
+    .expand-button {
+      position:absolute; top:10px; right:10px;
+      width:30px; height:30px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      border:2px solid #8b7355; background:white; cursor:pointer; z-index:60;
+      transition:all 0.2s;
+    }
+    .expand-button:hover { background:#8b7355; color:white; }
+    .expand-button.expanded { background:#2563eb; border-color:#2563eb; color:white; }
+
+    .spread-button {
+      position:absolute; top:10px; right:50px;
+      width:30px; height:30px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      border:2px solid rgba(99,102,241,0.6); background:white; cursor:pointer; z-index:60;
+      transition:all 0.18s;
+    }
+    .spread-button:hover { background: rgba(99,102,241,0.9); color:white; border-color: rgba(99,102,241,0.9); }
+    .spread-button.active { background:#10b981; color:white; border-color:#10b981; }
+
+    .connector-svg {
+      position:absolute;
+      top:0;
+      left:0;
+      pointer-events:none;
+      z-index:2;
+      overflow: visible;
+    }
+    .connector-path { fill:none; stroke:#2563eb; stroke-width:2.5; opacity:0.95; filter: drop-shadow(0 6px 14px rgba(37,99,235,0.08)); stroke-linecap:round; }
+
+    @media (max-width: 900px) {
+      .sidebar { display:none; }
+    }
+
+    .breadcrumb {
+      margin-bottom: 20px;
+      padding: 10px 15px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% block content %}{% endblock %}
+
+  {% block extra_scripts %}
+  <!-- Load browser-friendly scripts from static -->
+  <script src="{% static 'js/normalizeData.browser.js' %}"></script>
+  <script src="{% static 'js/fetchTreeData.browser.js' %}"></script>
+  <script type="text/babel" src="{% static 'js/app.jsx' %}"></script>
+  {% endblock %}
+</body>
+</html>
