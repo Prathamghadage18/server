@@ -60,6 +60,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",   # Vite dev server
     "https://client-61oh.vercel.app",
 ]
+CSRF_TRUSTED_ORIGINS = ["https://client-61oh.vercel.app"]
 
 
 ROOT_URLCONF = 'server.urls'
