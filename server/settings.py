@@ -57,8 +57,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "https://server-1-8kx7.onrender.com/"
+    "http://localhost:5173",   # Vite dev server
+    "http://127.0.0.1:5173",
 ]
 
 
