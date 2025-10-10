@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-3ul5yhmt4e+u_8dnd__&!^&sq9-$w31di!x%wrq6f5osmw%5&g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["https://server-1-to9c.onrender.com/"]
 
 
 # Application definition
@@ -58,7 +58,7 @@ MIDDLEWARE = [
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",   # Vite dev server
-    "http://127.0.0.1:5173",
+    "https://client-61oh.vercel.app",
 ]
 
 
