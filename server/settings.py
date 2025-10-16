@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-3ul5yhmt4e+u_8dnd__&!^&sq9-$w31di!x%wrq6f5osmw%5&g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["https://server-1-to9c.onrender.com/"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -56,11 +56,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",   # Vite dev server
-    "https://client-61oh.vercel.app",
-]
-CSRF_TRUSTED_ORIGINS = ["https://client-61oh.vercel.app"]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",   # Vite dev server
+  
+# ]
+
 
 
 ROOT_URLCONF = 'server.urls'
@@ -118,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -152,4 +152,9 @@ EXCEL_DEFAULT_PATH = os.getenv("EXCEL_DEFAULT_PATH", None)
 # temporary upload dir
 TMP_UPLOAD_DIR = os.path.join(BASE_DIR, "tmp_uploads")
 os.makedirs(TMP_UPLOAD_DIR, exist_ok=True)
+
+# Authentication settings
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/sensor-tree/'
+LOGOUT_REDIRECT_URL = '/login/'
 

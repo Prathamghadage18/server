@@ -15,13 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.http import JsonResponse
 from django.urls import path, include
+from django.shortcuts import redirect
 
-def home(request):
-    return JsonResponse({"status": "Api is running"})
 urlpatterns = [
-    path('', home),
+    path('', lambda request: redirect('login'), name='home'),
     path('admin/', admin.site.urls),
-    path('api/', include('treeapi.urls')),
+    path('api/', include('treeapi.urls')),  # API endpoints
+    path('', include('treeapi.urls')),  # Direct page access
 ]
